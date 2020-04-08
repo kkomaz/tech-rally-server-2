@@ -1,9 +1,11 @@
+// https://stackoverflow.com/questions/5539955/how-to-paginate-with-mongoose-in-node-js
 const Blog = require('../models/blog.model');
 const upload = require('../services/file-upload');
 const singleUpload = upload.single('image');
 
 exports.blogList = (req, res, next) => {
-  Blog.find({}, (err, blogs) => {
+  const query = Blog.find({}).limit(3);
+  query.exec((err, blogs) => {
     if (err) return next(err);
 
     res.send({ blogs });
