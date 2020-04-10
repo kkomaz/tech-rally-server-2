@@ -4,11 +4,14 @@ const upload = require('../services/file-upload');
 const singleUpload = upload.single('image');
 
 exports.blogList = (req, res, next) => {
-  const query = Blog.find({}).limit(3);
+  const { limit } = req.query;
+
+  const query = Blog.find({}).sort({ created_at: -1 }).limit(parseInt(limit));
+
   query.exec((err, blogs) => {
     if (err) return next(err);
 
-    res.send({ blogs });
+    res.send(blogs);
   });
 };
 
@@ -21,6 +24,7 @@ exports.blogCreate = (req, res, next) => {
     }
     blog = new Blog({
       title: req.body.title,
+      sub_title: req.body.sub_title,
       video_url: req.body.video_url,
       description: req.body.description,
       image_url: req.file.location,

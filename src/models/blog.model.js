@@ -18,6 +18,6 @@ const BlogSchema = new Schema({
   description: {
     type: String,
   }
-});
+}, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
 module.exports = mongoose.model('Blog', BlogSchema);
