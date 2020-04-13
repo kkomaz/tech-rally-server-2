@@ -1,7 +1,7 @@
 // https://stackoverflow.com/questions/5539955/how-to-paginate-with-mongoose-in-node-js
 const Blog = require('../models/blog.model');
-const upload = require('../services/file-upload');
-const singleUpload = upload.single('image');
+const fileUpload = require('../services/file-upload');
+const singleUpload = fileUpload.upload.single('image');
 
 exports.blogList = (req, res, next) => {
   const { limit } = req.query;
@@ -51,22 +51,30 @@ exports.blogDetail = (req, res, next) => {
 };
 
 exports.blogUpdate = (req, res, next) => {
-  Blog.findByIdAndUpdate(
-    req.params.id,
-    {
-      $set: req.body,
-    },
-    {
-      new: true,
-    },
-    (err, blog) => {
-      if (err) return next(err);
-      res.send({
-        message: 'blog updated',
-        blog,
-      });
+  singleUpload(req, res, (error) => {
+    if (error) {
+      return res.status(422).send({errors: [{title: 'File Upload Error', detail: err.message}] });
     }
-  );
+
+    const setParams = req.file ? { ...req.body, image_url: req.file.location } : req.body;
+
+    Blog.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: setParams,
+      },
+      {
+        new: true,
+      },
+      (err, blog) => {
+        if (err) return next(err);
+        res.send({
+          message: 'blog updated',
+          blog,
+        });
+      }
+    );
+  })
 };
 
 exports.blogDelete = (req, res, next) => {
