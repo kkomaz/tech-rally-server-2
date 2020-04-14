@@ -22,12 +22,14 @@ exports.blogCreate = (req, res, next) => {
     if (error) {
       return res.status(422).send({errors: [{title: 'File Upload Error', detail: err.message}] });
     }
+
     blog = new Blog({
       title: req.body.title,
       sub_title: req.body.sub_title,
       video_url: req.body.video_url,
       description: req.body.description,
       image_url: req.file.location,
+      key: req.file.key,
     });
 
     blog.save((err, newBlog) => {
@@ -51,12 +53,29 @@ exports.blogDetail = (req, res, next) => {
 };
 
 exports.blogUpdate = (req, res, next) => {
-  singleUpload(req, res, (error) => {
+  singleUpload(req, res, async (error) => {
     if (error) {
       return res.status(422).send({errors: [{title: 'File Upload Error', detail: err.message}] });
     }
 
-    const setParams = req.file ? { ...req.body, image_url: req.file.location } : req.body;
+    const setParams = req.file ? { ...req.body, image_url: req.file.location, key: req.file.key } : req.body;
+
+    const blog = await Blog.findOne({ title: 'Test product' });
+
+    if (req.file) {
+      const params = {
+        Bucket: 'tech-rally-test-bucket', 
+        Delete: {
+          Objects: [{ Key: blog.key }], 
+          Quiet: false
+        }
+      };
+
+      fileUpload.s3.deleteObjects(params, function(err, data) {
+        if (err) return next(err);
+        else console.log("Successfully deleted myBucket/myKey");   
+      });
+    }
 
     Blog.findByIdAndUpdate(
       req.params.id,
@@ -80,6 +99,19 @@ exports.blogUpdate = (req, res, next) => {
 exports.blogDelete = (req, res, next) => {
   Blog.findByIdAndRemove(req.params.id, (err) => {
     if (err) return next(err);
+
+    const params = {
+      Bucket: 'tech-rally-test-bucket', 
+      Delete: {
+        Objects: [{ Key: req.body.key }], 
+        Quiet: false
+      }
+    };
+
+    fileUpload.s3.deleteObjects(params, function(err, data) {
+      if (err) return next(err);
+      else console.log("Successfully deleted myBucket/myKey");   
+    });
 
     res.send({
       message: 'Deleted successfully',

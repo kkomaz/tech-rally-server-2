@@ -17,6 +17,9 @@ const BlogSchema = new Schema({
   },
   description: {
     type: String,
+  },
+  key: {
+    type: String,
   }
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
