@@ -8,6 +8,6 @@ router.get('/', blogController.blogList);
 router.post('/create', checkJwt, blogController.blogCreate);
 router.get('/:id', blogController.blogDetail);
 router.put('/:id/update', checkJwt, blogController.blogUpdate);
-router.delete('/:id/delete', blogController.blogDelete);
+router.delete('/:id/delete', checkJwt, blogController.blogDelete);
 
 module.exports = router;
