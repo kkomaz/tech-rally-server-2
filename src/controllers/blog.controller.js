@@ -103,7 +103,7 @@ exports.blogDelete = (req, res, next) => {
     const params = {
       Bucket: 'tech-rally-test-bucket', 
       Delete: {
-        Objects: [{ Key: req.body.key }], 
+        Objects: [{ Key: req.query.key }], 
         Quiet: false
       }
     };
