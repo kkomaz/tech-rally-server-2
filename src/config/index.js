@@ -5,4 +5,5 @@ module.exports = {
   AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY,
   EMAIL: process.env.EMAIL,
   EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
+  TO_EMAIL: process.env.TO_EMAIL
 }
