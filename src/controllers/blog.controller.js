@@ -60,7 +60,9 @@ exports.blogUpdate = (req, res, next) => {
 
     const setParams = req.file ? { ...req.body, image_url: req.file.location, key: req.file.key } : req.body;
 
-    const blog = await Blog.findOne({ title: 'Test product' });
+    const blog = await Blog.findOne({ _id: req.params.id });
+
+    console.log(blog, 'blog');
 
     if (req.file) {
       const params = {
