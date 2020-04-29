@@ -3,7 +3,6 @@ const express = require('express');
 const http = require('http');
 const bodyParser = require('body-parser');
 
-const cors = require('cors');
 const helmet = require('helmet');
 
 // mongodb setup
@@ -30,9 +29,6 @@ app.use(bodyParser.json())
 
 // enhance your app security with Helmet
 app.use(helmet());
-
-// enable all CORS requests
-app.use(cors());
 
 app.use((req, res, next) => {
   // Website you wish to allow to connect
