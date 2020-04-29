@@ -29,7 +29,7 @@ exports.blogCreate = (req, res, next) => {
       video_url: req.body.video_url,
       description: req.body.description,
       image_url: req.file.location,
-      key: req.file.key,
+      image_key: req.file.key,
     });
 
     blog.save((err, newBlog) => {
@@ -62,13 +62,11 @@ exports.blogUpdate = (req, res, next) => {
 
     const blog = await Blog.findOne({ _id: req.params.id });
 
-    console.log(blog, 'blog');
-
     if (req.file) {
       const params = {
         Bucket: 'tech-rally-test-bucket', 
         Delete: {
-          Objects: [{ Key: blog.key }], 
+          Objects: [{ Key: blog.image_key }], 
           Quiet: false
         }
       };
@@ -105,7 +103,7 @@ exports.blogDelete = (req, res, next) => {
     const params = {
       Bucket: 'tech-rally-test-bucket', 
       Delete: {
-        Objects: [{ Key: req.body.key }], 
+        Objects: [{ Key: req.query.image_key }], 
         Quiet: false
       }
     };
