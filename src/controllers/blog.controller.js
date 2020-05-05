@@ -3,6 +3,10 @@ const Blog = require('../models/blog.model');
 const fileUpload = require('../services/file-upload');
 const singleUpload = fileUpload.upload.single('image');
 
+const slugify = (title) => {
+  return title.replace(/\?/g,'').toLowerCase().split(' ').join('-')
+}
+
 exports.blogList = (req, res, next) => {
   const { limit } = req.query;
 
@@ -25,6 +29,7 @@ exports.blogCreate = (req, res, next) => {
 
     blog = new Blog({
       title: req.body.title,
+      slug: slugify(req.body.title),
       sub_title: req.body.sub_title,
       video_url: req.body.video_url,
       description: req.body.description,
@@ -58,7 +63,9 @@ exports.blogUpdate = (req, res, next) => {
       return res.status(422).send({errors: [{title: 'File Upload Error', detail: err.message}] });
     }
 
-    const setParams = req.file ? { ...req.body, image_url: req.file.location, key: req.file.key } : req.body;
+    const setParams = req.file ?
+      { ...req.body, image_url: req.file.location, key: req.file.key, slug: slugify(req.body.title) } :
+      { ...req.body, slug: slugify(req.body.title) };
 
     const blog = await Blog.findOne({ _id: req.params.id });
 

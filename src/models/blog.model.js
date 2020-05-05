@@ -6,6 +6,9 @@ const BlogSchema = new Schema({
   title: {
     type: String,
   },
+  slug: {
+    type: String,
+  },
   sub_title: {
     type: String,
   },
